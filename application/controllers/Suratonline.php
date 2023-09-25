@@ -57,7 +57,12 @@ class Suratonline extends CI_Controller
 
     public function ajukan()
     {
-        $now = new DateTime('now');
+
+        $nik = $this->input->post('nik', TRUE);
+        if($this->pengajuan_track->findById($nik)){
+        redirect(base_url("home"));
+        }else{
+            $now = new DateTime('now');
  
         $status = [
             1 => 1,  // Pending
@@ -67,7 +72,6 @@ class Suratonline extends CI_Controller
         ];
 
         $nama = $this->input->post('nama', TRUE);
-        $nik = $this->input->post('nik', TRUE);
         $t_lahir = $this->input->post('tempat_lahir', TRUE);
         $tgl_lahir = $this->input->post('tanggal_lahir', TRUE);
         $job = $this->input->post('pekerjaan', TRUE);
@@ -139,56 +143,95 @@ class Suratonline extends CI_Controller
        
             $ktp = substr($_FILES['ktp']['name'], -7);
             $file =  uniqid() . $ktp;
-            $config['upload_path']          = './uploads/berkas';
-            $config['allowed_types']        = '*';
-            $config['max_size']             = 5120; // 5MB
-            $config['file_name']            = $file;
+            $configKtp['upload_path']          = './uploads/berkas';
+            $configKtp['allowed_types']        = '*';
+            $configKtp['max_size']             = 5120; // 5MB
+            $configKtp['file_name']            = $file;
 
-            $pribadi = substr($_FILES['pribadi']['name'], -7);
-            // $file = $jenis_surat . uniqid() . $namafile;
-            // $config['upload_path']          = './uploads/berkas';
-            // $config['allowed_types']        = '*';
-            // $config['max_size']             = 5120; // 5MB
-            // $config['file_name']            = $file;
+            $this->load->library('upload', $configKtp);
+
+
+            $filePribadi = substr($_FILES['pribadi']['name'], -7);
+            $filePribadi =uniqid() . $filePribadi;
+            $configPribadi['upload_path']          = './uploads/berkas';
+            $configPribadi['allowed_types']        = '*';
+            $configPribadi['max_size']             = 5120; // 5MB
+            $configPribadi['file_name']            = $filePribadi;
+
+            $this->load->library('upload', $configPribadi);
+
             
-            $desa = substr($_FILES['desa']['name'], -7);
-            // $file = $jenis_surat . uniqid() . $namafile;
-            // $config['upload_path']          = './uploads/berkas';
-            // $config['allowed_types']        = '*';
-            // $config['max_size']             = 5120; // 5MB
-            // $config['file_name']            = $file;
+            $fileDesa = substr($_FILES['desa']['name'], -7);
+            $fileDesa = uniqid() . $fileDesa;
+            $configDesa['upload_path']          = './uploads/berkas';
+            $configDesa['allowed_types']        = '*';
+            $configDesa['max_size']             = 5120; // 5MB
+            $configDesa['file_name']            = $fileDesa;
 
-            $camat = substr($_FILES['camat']['name'], -7);
-            // $file = $jenis_surat . uniqid() . $namafile;
-            // $config['upload_path']          = './uploads/berkas';
-            // $config['allowed_types']        = '*';
-            // $config['max_size']             = 5120; // 5MB
-            // $config['file_name']            = $file;
+            $this->load->library('upload', $configDesa);
 
-            $ijazah = substr($_FILES['ijazah']['name'], -7);
-            // $file = $jenis_surat . uniqid() . $namafile;
-            // $config['upload_path']          = './uploads/berkas';
-            // $config['allowed_types']        = '*';
-            // $config['max_size']             = 5120; // 5MB
-            // $config['file_name']            = $file;
+            $fileCamat = substr($_FILES['camat']['name'], -7);
+            $fileCamat = uniqid() . $fileCamat;
+            $configCamat['upload_path']          = './uploads/berkas';
+            $configCamat['allowed_types']        = '*';
+            $configCamat['max_size']             = 5120; // 5MB
+            $configCamat['file_name']            = $fileCamat;
 
-            $foto = substr($_FILES['foto']['name'], -7);
-            // $file = $jenis_surat . uniqid() . $namafile;
-            // $config['upload_path']          = './uploads/berkas';
-            // $config['allowed_types']        = '*';
-            // $config['max_size']             = 5120; // 5MB
-            // $config['file_name']            = $file;
+            $this->load->library('upload', $configCamat);
+
+            $fileIjazah = substr($_FILES['ijazah']['name'], -7);
+            $fileIjazah = uniqid() . $fileIjazah;
+            $configIjazah['upload_path']          = './uploads/berkas';
+            $configIjazah['allowed_types']        = '*';
+            $configIjazah['max_size']             = 5120; // 5MB
+            $configIjazah['file_name']            = $fileIjazah;
+
+            $this->load->library('upload', $configIjazah);
+
+            $fileFoto = substr($_FILES['foto']['name'], -7);
+            $fileFoto = uniqid() . $fileFoto;
+            $configFoto['upload_path']          = './uploads/berkas';
+            $configFoto['allowed_types']        = '*';
+            $configFoto['max_size']             = 5120; // 5MB
+            $configFoto['file_name']            = $fileFoto;
+
+            $this->load->library('upload', $configFoto);
 
 
 
 
 
 
-            $this->load->library('upload', $config);
 
             if ($this->upload->do_upload("ktp")) {
-                $data = array('upload_data' => $this->upload->data());
-                $berkas = $data['upload_data']['file_name'];
+                echo "<script> alert('BERHASILLL') <script>";
+                $this->upload->data();                // $data = array('upload_data' => $this->upload->data());
+                // $berkas = $data['upload_data']['file_name'];
+            }
+            if ($this->upload->do_upload("pribadi")) {
+                echo "<script> alert('BERHASILLL') <script>";
+                $this->upload->data();                // $data = array('upload_data' => $this->upload->data());
+                // $berkas = $data['upload_data']['file_name'];
+            }
+            if ($this->upload->do_upload("desa")) {
+                echo "<script> alert('BERHASILLL') <script>";
+                $this->upload->data();                // $data = array('upload_data' => $this->upload->data());
+                // $berkas = $data['upload_data']['file_name'];
+            }
+            if ($this->upload->do_upload("camat")) {
+                echo "<script> alert('BERHASILLL') <script>";
+                $this->upload->data();                // $data = array('upload_data' => $this->upload->data());
+                // $berkas = $data['upload_data']['file_name'];
+            }
+            if ($this->upload->do_upload("ijazah")) {
+                echo "<script> alert('BERHASILLL') <script>";
+                $this->upload->data();                // $data = array('upload_data' => $this->upload->data());
+                // $berkas = $data['upload_data']['file_name'];
+            }
+            if ($this->upload->do_upload("foto")) {
+                echo "<script> alert('BERHASILLL') <script>";
+                $this->upload->data();                // $data = array('upload_data' => $this->upload->data());
+                // $berkas = $data['upload_data']['file_name'];
             }
         
 
@@ -196,7 +239,7 @@ class Suratonline extends CI_Controller
           
             'nik' => $nik,
             'ktp' => $ktp,
-            'pernyataan_pribadi' => $pribadi,
+            'pernyataan_pribadi' => $filePribadi,
             'suket_desa' => $desa,
             'suket_kec' => $camat,
             'Ijazah' => $ijazah,
@@ -206,12 +249,12 @@ class Suratonline extends CI_Controller
         
         $this->db->insert('upload_file', $data);
 
-        // var_dump($data);
         // die;
 
         //$this->pengajuan_track->insert_p_surat($data);
         $this->session->set_flashdata('success', '<div class="alert alert-success alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><h5><i class="icon fas fa-check"></i> Selamat!</h5> Berhasil Mengajukan Surat! Berikut <b>ID</b> anda: <b>' . $id . '</b></div>');
-        redirect(base_url("suratonline"));
+        redirect(base_url("tracking"));
+        }
     }
 
     function IsPengajuanExist($nik)

@@ -15,7 +15,7 @@ class Pengajuan_track_model extends CI_Model
 
     public function findById($id)
     {
-        $query = $this->db->get_where('pengajuan_surat', ['id' => $id])->row_array();
+        $query = $this->db->get_where('pengajuan_surat', ['nik' => $id])->row_array();
         return $query;
     }
 
