@@ -428,38 +428,42 @@ class Surat extends CI_Controller
         ];
 
         $data['status'] = [
-            1 => 'Pending',
-            2 => 'Syarat Tidak Terpenuhi',
-            3 => 'Diterima dan Dilanjutkan',
-            4 => 'Sudah Diketik dan Diparaf',
-            5 => 'Ditandatangani Lurah/<b>Selesai</b>',
+            0 => "Ditolak",
+            1 => 'Belum diproses',
+            2 => 'Diproses',
+            3 => 'Diterima',
         ];
 
-        $data['options'] = [
-            'SPKK' => 'Kartu Keluarga',
-            'SPNA' => 'Nikah(N.A)',
-            'SKKL' => 'Kelahiran',
-            'SKKM' => 'Kematian',
-            'SKP' => 'Pindah',
-            'SKD' => 'Datang',
-            'SKBM' => 'Belum Menikah',
-            'SKPH' => 'Penghasilan',
-            'SKM' => 'Miskin',
-            'SKU' => 'Usaha',
-            'SKT' => 'Tanah',
-            'SKGG' => 'Ganti Rugi',
-            'SITU' => 'Izin Tempat Usaha',
-            'SIMB' => 'Izin Mendirikan Bangunan',
-        ];
         $this->db->select('*');
         $this->db->from('pengajuan_surat');
-        $this->db->join('penduduk','penduduk.nik=pengajuan_surat.NIK');
-        $this->db->order_by("tanggal", "desc");
+        $this->db->join('user', 'user.id_user=pengajuan_surat.id_user');
+        $this->db->order_by("dtm_submission", "desc");
         $query = $this->db->get();
         $data['data'] = $query->result_array();
 
         $this->load->view('templates/header', $judul);
         $this->load->view('surat/pengajuan_surat', $data);
+        $this->load->view('templates/footer');
+    }
+
+    public function detailPengajuan($id)
+    {
+
+        $this->db->select('*');
+        $this->db->from('pengajuan_surat');
+        $this->db->where("id", $id);
+        $this->db->join('user', 'user.id_user=pengajuan_surat.id_user');
+        $query = $this->db->get();
+        $data['data'] = $query->result_array()[0];
+        // var_dump($data['data']);
+
+        $judul = [
+            'title' => 'Management Surat',
+            'sub_title' => 'Pengajuan Surat',
+        ];
+
+        $this->load->view("templates/header", $judul);
+        $this->load->view("surat/detail_pengajuan_surat", $data);
         $this->load->view('templates/footer');
     }
 
@@ -496,9 +500,9 @@ class Surat extends CI_Controller
             // die;
 
             $save = [
-                'nama_surat_keluar' => '['.$pndk['nama'].'-'.$pndk['nik'].']-Surat '.$options[$pSurat['jenis_surat']],
+                'nama_surat_keluar' => '[' . $pndk['nama'] . '-' . $pndk['nik'] . ']-Surat ' . $options[$pSurat['jenis_surat']],
                 'tanggal_surat_keluar' => date('Y-m-d', strtotime($dateNow)),
-                'keterangan_surat_keluar' => 'ID: '.$pSurat['id']
+                'keterangan_surat_keluar' => 'ID: ' . $pSurat['id']
             ];
 
             $this->db->insert('surat_keluar', $save);
